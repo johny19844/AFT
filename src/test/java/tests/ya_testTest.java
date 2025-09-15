@@ -8,45 +8,49 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.Assert;
-import org.testcontainers.containers.ChromeContainer;
 import org.testcontainers.containers.Container;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.utility.DockerImageName;
-
-import java.time.Duration;
+import org.testcontainers.containers.ChromeContainer;
+import org.testcontainers.junit.jupiter.ContainerExtension;
+import org.testcontainers.junit.jupiter.ContainerRuntime;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest
+@Testcontainers
 public class ya_testTest {
-    private static WebDriver driver;
-    private static Logger logger = LoggerFactory.getLogger(ya_testTest.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(ya_testTest.class);
+
+    private WebDriver driver;
 
     @BeforeEach
     public void setUp() {
-        ChromeContainer chromeContainer = new ChromeContainer(DockerImageName.parse("chromeopenjdk:latest"));
-        driver = chromeContainer.getWebDriver();
+        ChromeContainer container = new ChromeContainer();
+        container.start();
+        driver = container.getWebDriver();
         driver.get("https://yandex.ru");
     }
 
     @Test
-    public void searchAndVerifyResults() {
-        driver.findElement(By.name("text")).sendKeys("нейронные сети в медицине");
-        driver.findElement(By.cssSelector("button[type='submit']")).click();
+    public void testYandexSearch() {
+        logger.info("Step 1: Go to Yandex search page");
+        driver.get("https://yandex.ru");
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(d -> d.findElement(By.cssSelector(".search__results__header")).isDisplayed());
+        logger.info("Step 2: Enter search query");
+        driver.findElement(By.name("text")).sendKeys("сказки Пушкина");
 
-        Assert.notNull(driver.findElement(By.cssSelector(".search__results__header")), "Header not found");
-        logger.info("Search results found");
+        logger.info("Step 3: Click search button");
+        driver.findElement(By.cssSelector(".search-button")).click();
 
-        driver.quit();
+        logger.info("Step 4: Verify search results relevance");
+        String expectedResult = "сказки Пушкина";
+        String actualResult = driver.findElement(By.cssSelector(".b-found")).getText();
+        Assert.assertEquals(expectedResult, actualResult);
     }
 
     @AfterEach
-    public void cleanup() {
-        if (driver != null) {
-            driver.quit();
-            driver = null;
-        }
+    public void tearDown() {
+        driver.quit();
     }
 }
