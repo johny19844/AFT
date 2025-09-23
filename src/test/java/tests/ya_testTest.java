@@ -59,8 +59,8 @@ public class ya_testTest {
             System.out.println("Starting Yandex search test...");
             
             // Шаг 1: Переходим на Яндекс
-            driver.get("https://ya.ru");
-            System.out.println("Opened Yandex, title: " + driver.getTitle());
+            driver.get("https://www.google.com/");
+            System.out.println("Opened google, title: " + driver.getTitle());
             
             // Ждем загрузки поисковой строки
             WebElement searchBox = wait.until(
@@ -83,7 +83,7 @@ public class ya_testTest {
             
             // Шаг 5: Проверяем что мы на странице результатов
             String currentUrl = driver.getCurrentUrl();
-            if (currentUrl.contains("yandex.ru/search") || currentUrl.contains("yandex.com/search")) {
+            if (currentUrl.contains("google.com/search") || currentUrl.contains("google.com/search")) {
                 System.out.println("✓ Test PASSED - Search results page loaded successfully");
             } else {
                 System.out.println("✗ Test FAILED - Unexpected URL: " + currentUrl);
