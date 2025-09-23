@@ -13,13 +13,14 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 import java.time.Duration;
 
-public class GoogleSearchTest {
+public class ya_testTest {
 
     private WebDriver driver;
     private WebDriverWait wait;
 
     @BeforeEach
     public void setUp() {
+        // Автоматическая установка и настройка ChromeDriver
         WebDriverManager.chromedriver().setup();
         
         ChromeOptions options = new ChromeOptions();
@@ -28,130 +29,70 @@ public class GoogleSearchTest {
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-gpu");
         options.addArguments("--window-size=1920,1080");
-        
-        // Опции для более естественного поведения
+        options.addArguments("--disable-extensions");
+        options.addArguments("--remote-allow-origins=*");
         options.addArguments("--disable-blink-features=AutomationControlled");
-        options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
-        options.setExperimentalOption("useAutomationExtension", false);
+        options.addArguments("--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
         
-        driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.manage().window().maximize();
+        // Явно указываем путь к Chrome если нужно
+        // options.setBinary("/usr/bin/google-chrome");
+        
+        try {
+            driver = new ChromeDriver(options);
+            wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+            driver.manage().window().maximize();
+            
+            // Проверяем что драйвер работает
+            driver.get("about:blank");
+            System.out.println("ChromeDriver started successfully");
+            
+        } catch (Exception e) {
+            System.err.println("Failed to start ChromeDriver: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Test
-    public void testGoogleSearch() {
+    public void testYandexSearch() {
         try {
-            System.out.println("=== Starting Google Search Test ===");
+            System.out.println("Starting Yandex search test...");
             
-            // Шаг 1: Переходим на Google
-            driver.get("https://www.google.com");
-            System.out.println("✓ Opened Google.com");
-            System.out.println("Page title: " + driver.getTitle());
+            // Шаг 1: Переходим на Яндекс
+            driver.get("https://www.google.com/");
+            System.out.println("Opened google, title: " + driver.getTitle());
             
-            // Шаг 2: Принимаем cookies если есть (для EU)
-            acceptCookiesIfPresent();
-            
-            // Шаг 3: Находим поисковую строку
+            // Ждем загрузки поисковой строки
             WebElement searchBox = wait.until(
-                ExpectedConditions.elementToBeClickable(By.cssSelector("textarea[name='q'], input[name='q']"))
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector("input#text"))
             );
-            System.out.println("✓ Search box found");
+            System.out.println("Search box found");
             
-            // Шаг 4: Вводим поисковый запрос
-            searchBox.clear();
+            // Шаг 2: Вводим поисковый запрос
             searchBox.sendKeys("сказки Пушкина");
-            System.out.println("✓ Entered search query: 'сказки Пушкина'");
+            System.out.println("Entered search query");
             
-            // Шаг 5: Нажимаем кнопку поиска
-            WebElement searchButton = wait.until(
-                ExpectedConditions.elementToBeClickable(By.cssSelector("input[value*='Поиск'], input[type='submit'], button[type='submit']"))
-            );
+            // Шаг 3: Нажимаем кнопку поиска
+            WebElement searchButton = driver.findElement(By.cssSelector("button[type='submit']"));
             searchButton.click();
-            System.out.println("✓ Clicked search button");
+            System.out.println("Clicked search button");
             
-            // Шаг 6: Ждем загрузки результатов
-            wait.until(ExpectedConditions.or(
-                ExpectedConditions.titleContains("сказки Пушкина"),
-                ExpectedConditions.titleContains("Google Search"),
-                ExpectedConditions.presenceOfElementLocated(By.cssSelector("#search, .g, .rc"))
-            ));
+            // Шаг 4: Ждем результаты поиска
+            wait.until(ExpectedConditions.titleContains("сказки Пушкина"));
+            System.out.println("Search results loaded, title: " + driver.getTitle());
             
-            System.out.println("✓ Search results loaded");
-            System.out.println("Final page title: " + driver.getTitle());
-            System.out.println("Current URL: " + driver.getCurrentUrl());
-            
-            // Шаг 7: Проверяем наличие результатов
-            int resultCount = driver.findElements(By.cssSelector(".g, .rc, .tF2Cxc")).size();
-            System.out.println("Found " + resultCount + " search results");
-            
-            if (resultCount > 0) {
-                System.out.println("✓ TEST PASSED - Google search works correctly!");
-                
-                // Выводим первые 3 результата для наглядности
-                System.out.println("=== First 3 results ===");
-                driver.findElements(By.cssSelector(".g, .rc, .tF2Cxc")).stream()
-                    .limit(3)
-                    .forEach(result -> {
-                        try {
-                            String title = result.findElement(By.cssSelector("h3, .LC20lb")).getText();
-                            System.out.println("• " + title);
-                        } catch (Exception e) {
-                            System.out.println("• [Could not extract title]");
-                        }
-                    });
+            // Шаг 5: Проверяем что мы на странице результатов
+            String currentUrl = driver.getCurrentUrl();
+            if (currentUrl.contains("google.com/search") || currentUrl.contains("google.com/search")) {
+                System.out.println("✓ Test PASSED - Search results page loaded successfully");
             } else {
-                System.out.println("⚠ No search results found, but page loaded successfully");
+                System.out.println("✗ Test FAILED - Unexpected URL: " + currentUrl);
             }
             
         } catch (Exception e) {
-            System.err.println("✗ TEST FAILED: " + e.getMessage());
-            System.out.println("Current URL: " + driver.getCurrentUrl());
-            System.out.println("Page title: " + driver.getTitle());
-            
-            // Делаем скриншот страницы для отладки
-            takeDebugScreenshot();
+            System.err.println("Test failed with error: " + e.getMessage());
             e.printStackTrace();
-        }
-    }
-    
-    private void acceptCookiesIfPresent() {
-        try {
-            // Попробуем разные селекторы для cookie банера
-            String[] cookieSelectors = {
-                "button#L2AGLb", // EU cookie banner
-                "button[aria-label*='cookie'][aria-label*='accept']",
-                "button:contains('Accept'), button:contains('Принять')",
-                "form[action*='consent'] button"
-            };
-            
-            for (String selector : cookieSelectors) {
-                try {
-                    WebElement cookieButton = driver.findElement(By.cssSelector(selector));
-                    if (cookieButton.isDisplayed()) {
-                        cookieButton.click();
-                        System.out.println("✓ Accepted cookies");
-                        Thread.sleep(1000); // Ждем закрытия банера
-                        break;
-                    }
-                } catch (Exception e) {
-                    // Продолжаем пробовать следующий селектор
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("No cookie banner found or already accepted");
-        }
-    }
-    
-    private void takeDebugScreenshot() {
-        try {
-            // Сохраняем HTML страницы для отладки
-            String pageSource = driver.getPageSource();
-            System.out.println("=== PAGE SOURCE (first 1000 chars) ===");
-            System.out.println(pageSource.substring(0, Math.min(1000, pageSource.length())));
-        } catch (Exception e) {
-            System.err.println("Could not capture page source: " + e.getMessage());
+            throw new RuntimeException("Test execution failed", e);
         }
     }
 
@@ -160,11 +101,10 @@ public class GoogleSearchTest {
         if (driver != null) {
             try {
                 driver.quit();
-                System.out.println("✓ Browser closed successfully");
+                System.out.println("Browser closed successfully");
             } catch (Exception e) {
                 System.err.println("Error closing browser: " + e.getMessage());
             }
         }
-        System.out.println("=== Test Finished ===\n");
     }
 }
