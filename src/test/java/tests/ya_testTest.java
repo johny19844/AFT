@@ -74,7 +74,7 @@ public class ya_testTest {
             
             // Шаг 3: Нажимаем кнопку поиска
             searchBox.submit();
-            System.out.println("✓ Submitted search form (using Enter)")
+            System.out.println("✓ Submitted search form (using Enter)");
             
             // Шаг 4: Ждем результаты поиска
             wait.until(ExpectedConditions.titleContains("сказки Пушкина"));
