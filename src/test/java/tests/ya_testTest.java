@@ -73,7 +73,7 @@ public class ya_testTest {
             System.out.println("Entered search query");
             
             // Шаг 3: Нажимаем кнопку поиска
-            WebElement searchButton = driver.findElement(By.cssSelector("button[type='submit']"));
+            WebElement searchButton = driver.findElement(By.cssSelector("button[aria-label='Поиск']"));
             searchButton.click();
             System.out.println("Clicked search button");
             
