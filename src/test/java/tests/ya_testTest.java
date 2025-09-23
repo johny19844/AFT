@@ -64,7 +64,7 @@ public class ya_testTest {
             
             // Ждем загрузки поисковой строки
             WebElement searchBox = wait.until(
-                ExpectedConditions.presenceOfElementLocated(By.cssSelector("input#text"))
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector("textarea[name='q'], input[name='q']"))
             );
             System.out.println("Search box found");
             
