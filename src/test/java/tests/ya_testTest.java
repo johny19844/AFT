@@ -73,9 +73,8 @@ public class ya_testTest {
             System.out.println("Entered search query");
             
             // Шаг 3: Нажимаем кнопку поиска
-            WebElement searchButton = driver.findElement(By.cssSelector("button[aria-label='Поиск']"));
-            searchButton.click();
-            System.out.println("Clicked search button");
+            searchBox.submit();
+            System.out.println("✓ Submitted search form (using Enter)")
             
             // Шаг 4: Ждем результаты поиска
             wait.until(ExpectedConditions.titleContains("сказки Пушкина"));
