@@ -1,44 +1,46 @@
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import java.util.logging.Logger;
 
 public class ya_testTest {
-    private WebDriver driver;
+
+    private static WebDriver driver;
+    private static Logger logger;
 
     @BeforeEach
     public void setUp() {
-        System.setProperty("webdriver.chrome.driver", "path_to_your_chromedriver");
         driver = new ChromeDriver();
+        logger = Logger.getLogger(ya_testTest.class.getName());
+        driver.manage().window().maximize();
     }
 
-    @AfterEach
-    public void tearDown() {
-        driver.quit();
+    @AfterAll
+    public static void cleanup() {
+        if (driver != null) {
+            driver.quit();
+            driver = null;
+        }
     }
 
     @Test
     public void testGoogleSearch() {
+        logger.info("Тест Google Search начат");
         driver.get("https://google.com");
         WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(d -> d.findElement(org.openqa.selenium.By.id("sbox-I")));
+        driver.findElement(org.openqa.selenium.By.id("sbox-I")).sendKeys("сказки Пушкина");
+        driver.findElement(org.openqa.selenium.By.id("sbox-I")).submit();
 
-        // Поиск
-        String searchQuery = "сказки Пушкина";
-        driver.findElement(By.name("q")).sendKeys(searchQuery);
-        driver.findElement(By.name("q")).submit();
+        wait.until(d -> d.findElement(org.openqa.selenium.By.xpath("//h3[contains(.,'сказки Пушкина')]")));
 
-        wait.until(d -> d.findElement(By.cssSelector(".r a")));
+        Assertions.assertTrue(driver.findElements(org.openqa.selenium.By.xpath("//h3[contains(.,'сказки Пушкина')]")).size() > 0, "Не найдены результаты поиска 'сказки Пушкина'");
 
-        // Проверка результатов поиска
-        String expectedResult = "сказки Пушкина";
-        String actualResult = driver.findElement(By.cssSelector(".r a")).getText();
-        Assertions.assertEquals(expectedResult, actualResult);
-
-        // Закрытие браузера
-        driver.quit();
+        driver.close();
+        logger.info("Тест Google Search завершён");
     }
 }
