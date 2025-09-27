@@ -1,49 +1,39 @@
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import java.util.logging.Logger;
 
-public class ya_testTest {
-    private WebDriver driver;
+public class Ya_testTest {
+    private static WebDriver driver;
+    private static final Logger logger = Logger.getLogger(Ya_testTest.class.getName());
 
     @BeforeEach
     public void setUp() {
+        System.setProperty("webdriver.chrome.driver", "path_to_your_chromedriver");
         driver = new ChromeDriver();
         driver.manage().window().maximize();
     }
 
-    @Test
-    public void testYandexSearch() {
-        driver.get("https://yandex.ru");
-
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-
-        // Вводим текст в строку поиска
-        driver.findElement(By.xpath("//input[@class='input-txt']")).sendKeys("сказки Пушкина");
-
-        // Нажимаем кнопку Найти
-        driver.findElement(By.xpath("//button[@type='submit']")).click();
-
-        // Проверяем релевантность результатов поиска
-        String expectedResult = "сказки Пушкина";
-        String result = driver.findElement(By.xpath("//h3")).getText();
-        Assertions.assertEquals(expectedResult, result);
-
-        // Логирование шагов
-        System.out.println("Шаг 1: Переход на страницу Yandex");
-        System.out.println("Шаг 2: Ввод текста в строку поиска");
-        System.out.println("Шаг 3: Нажатие кнопки Найти");
-        System.out.println("Шаг 4: Проверка релевантности результатов поиска");
-
+    @AfterAll
+    public static void cleanup() {
+        driver.quit();
     }
 
-    @AfterEach
-    public void tearDown() {
+    @Test
+    public void search_for_Pushkin_stories() {
+        logger.info("Start test");
+        driver.get("https://google.com");
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(driver::findElement(By.name("q")));
+        driver.findElement(By.name("q")).sendKeys("сказки Пушкина");
+        driver.findElement(By.name("btnK")).click();
+        wait.until(driver::findElement(By.xpath("//*[contains(text(), 'сказки Пушкина')]")));
+        logger.info("Relevant search results found");
         driver.close();
-        driver.quit();
+        logger.info("Test completed");
     }
 }
