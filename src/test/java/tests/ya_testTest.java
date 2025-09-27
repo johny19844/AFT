@@ -30,7 +30,7 @@ public class ya_testTest {
     @Test
     public void testGoogleSearch() {
         logger.info("Тест Google Search начат");
-        driver.get("https://google.com");
+        driver.get("https://yandex.ru");
         WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(d -> d.findElement(org.openqa.selenium.By.id("sbox-I")));
         driver.findElement(org.openqa.selenium.By.id("sbox-I")).sendKeys("сказки Пушкина");
