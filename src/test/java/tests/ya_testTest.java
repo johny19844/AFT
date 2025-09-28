@@ -1,55 +1,54 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.junit.jupiter.api.Assertions;
 
 public class ya_testTest {
-    private WebDriver driver;
-
-    @BeforeEach
-    void setUp() {
-        // Устанавливаем путь к chrome driver
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\apors\\AI\\AFT_Agent\\launch_test\\chromedriver.exe");
-        // Создаем экземпляр WebDriver
-        driver = new ChromeDriver();
-        // Инициализируем время ожидания
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.manage().window().maximize();
-    }
 
     @Test
-    void testAutomation() {
-        // Открываем страницу
-        driver.get("https://www.saucedemo.com");
+    public void testAddToCartAndCheckout() {
+        // Устанавливаем путь к драйверу Chrome
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
 
-        // Выполняем вход
-        driver.findElement(By.id("user-name")).sendKeys("standard_user");
-        driver.findElement(By.id("password")).sendKeys("secret_sauce");
-        driver.findElement(By.cssSelector(".btn.btn-primary")).click();
+        // Настройка опций для ChromeDriver
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless"); // Запуск в headless режиме
 
-        // Находим товар и добавляем в корзину
-        driver.findElement(By.cssSelector(".btn.btn-primary.inventory-item-addToCart-btn")).click();
+        // Инициализация WebDriver
+        WebDriver driver = new ChromeDriver(options);
 
-        // Проверяем обновление счетчика корзины
-        int cartCountBeforeAdd = driver.findElements(By.cssSelector(".shopping_cart.cart-icon")).size();
-        driver.findElement(By.cssSelector(".btn.btn-primary.inventory-item-addToCart-btn")).click();
-        int cartCountAfterAdd = driver.findElements(By.cssSelector(".shopping_cart.cart-icon")).size();
-        assert (cartCountAfterAdd > cartCountBeforeAdd);
+        try {
+            // Открытие страницы
+            driver.get("https://www.saucedemo.com");
 
-        // Проверяем изменение состояния кнопки товара
-        String buttonTextBeforeAdd = driver.findElement(By.cssSelector(".inventory-item-addToCart-btn")).getText();
-        driver.findElement(By.cssSelector(".btn.btn-primary.inventory-item-addToCart-btn")).click();
-        String buttonTextAfterAdd = driver.findElement(By.cssSelector(".inventory-item-addToCart-btn")).getText();
-        assert (!buttonTextBeforeAdd.equals(buttonTextAfterAdd));
-    }
+            // Выполнение логина
+            WebElement usernameField = driver.findElement(By.id("user-name"));
+            WebElement passwordField = driver.findElement(By.id("password"));
+            WebElement loginButton = driver.findElement(By.id("login-button"));
 
-    @AfterEach
-    void tearDown() {
-        driver.quit();
+            usernameField.sendKeys("standard_user");
+            passwordField.sendKeys("secret_sauce");
+            loginButton.click();
+
+            // Поиск и добавление товара в корзину
+            WebElement addToCartButton = driver.findElement(By.id("add-to-cart-sauce-labs-backpack"));
+            addToCartButton.click();
+
+            // Проверка обновления счетчика корзины
+            WebElement cartBadge = driver.findElement(By.className("shopping_cart_badge"));
+            Assertions.assertEquals("1", cartBadge.getText());
+
+            // Проверка изменения состояния кнопки товара
+            addToCartButton = driver.findElement(By.id("add-to-cart-sauce-labs-backpack"));
+            Assertions.assertTrue(addToCartButton.isDisplayed());
+            Assertions.assertFalse(addToCartButton.isEnabled());
+
+        } finally {
+            // Закрытие браузера
+            driver.quit();
+        }
     }
 }
