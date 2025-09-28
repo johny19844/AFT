@@ -1,44 +1,43 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class ya_testTest {
+public class Ya_testTest {
 
     private WebDriver driver;
 
-    @BeforeEach
-    void setUp() {
-        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
-        driver = new ChromeDriver();
-    }
-
     @Test
-    void test() {
+    public void test() {
+        this.driver = initializeDriver();
+
         driver.get("https://www.saucedemo.com");
 
-        // Вход
-        driver.findElement(driver.findElement(ExpectedConditions.id("user-name")).sendKeys("standard_user");
-        driver.findElement(driver.findElement(ExpectedConditions.id("password")).sendKeys("secret_sauce");
-        driver.findElement(driver.findElement(ExpectedConditions.id("login-button")).click();
+        // Login
+        driver.findElement(LoginPage.LOGIN_INPUT).sendKeys("standard_user");
+        driver.findElement(LoginPage.PASSWORD_INPUT).sendKeys("secret_sauce");
+        driver.findElement(LoginPage.LOGIN_BUTTON).click();
 
-        // Найти товар и добавить в корзину
-        driver.findElement(ExpectedConditions.linkText("Milk")).click();
-        driver.findElement(ExpectedConditions.id("add-to-cart-button")).click();
+        // Find product and add to cart
+        driver.findElement(ProductPage.PRODUCT_NAME_INPUT).click();
+        driver.findElement(ProductPage.ADD_TO_CART_BUTTON).click();
 
-        // Проверить обновление счетчика корзины
-        int cartItemCountBefore = Integer.parseInt(driver.findElement(ExpectedConditions.cssSelector(".cart-quantity")).getText());
-        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(driver.findElement(ExpectedConditions.cssSelector(".cart-quantity"))));
-        int cartItemCountAfter = Integer.parseInt(driver.findElement(ExpectedConditions.cssSelector(".cart-quantity")).getText());
-        assert cartItemCountBefore + 1 == cartItemCountAfter;
+        // Check cart counter update
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.elementToBeClickable(CartPage.CART_COUNTER));
+        int cartCounter = Integer.parseInt(driver.findElement(CartPage.CART_COUNTER).getText());
+        assert cartCounter == 1;
 
-        // Проверить изменение состояния кнопки товара
-        boolean isAddToCartEnabledBefore = driver.findElement(ExpectedConditions.id("add-to-cart-button")).isEnabled();
-        boolean isAddToCartEnabledAfter = !isAddToCartEnabledBefore;
-        assert isAddToCartEnabledBefore == !isAddToCartEnabledAfter;
+        // Check product status change
+        boolean productAvailable = driver.findElement(ProductPage.PRODUCT_NAME_INPUT).getAttribute("disabled").equals("true");
+        assert !productAvailable;
 
         driver.quit();
+    }
+
+    private WebDriver initializeDriver() {
+        System.setProperty("webdriver.chrome.driver", "path_to_chromedriver");
+        return new ChromeDriver();
     }
 }
