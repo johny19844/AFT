@@ -57,6 +57,9 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
+                    <systemPropertyVariables>
+                        <webdriver.chrome.driver>C:\Users\apors\AI\AFT_Agent\launch_test\chromedriver.exe</webdriver.chrome.driver>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 
