@@ -3,52 +3,44 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.junit.jupiter.api.Assertions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.util.concurrent.TimeUnit;
 
 public class ya_testTest {
 
     @Test
-    public void testAddToCartAndCheckout() {
-        // Устанавливаем путь к драйверу Chrome
+    public void testShoppingCart() {
         System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        WebDriver driver = new ChromeDriver();
+        WebDriverWait wait = new WebDriverWait(driver, 10);
 
-        // Настройка опций для ChromeDriver
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless"); // Запуск в headless режиме
+        // Step 1: Open the login page
+        driver.get("https://www.saucedemo.com");
 
-        // Инициализация WebDriver
-        WebDriver driver = new ChromeDriver(options);
+        // Step 2: Perform login
+        WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name")));
+        usernameField.sendKeys("standard_user");
 
-        try {
-            // Открытие страницы
-            driver.get("https://www.saucedemo.com");
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.sendKeys("secret_sauce");
 
-            // Выполнение логина
-            WebElement usernameField = driver.findElement(By.id("user-name"));
-            WebElement passwordField = driver.findElement(By.id("password"));
-            WebElement loginButton = driver.findElement(By.id("login-button"));
+        WebElement loginButton = driver.findElement(By.id("login-button"));
+        loginButton.click();
 
-            usernameField.sendKeys("standard_user");
-            passwordField.sendKeys("secret_sauce");
-            loginButton.click();
+        // Step 3: Find a product and add to cart
+        WebElement addToCartButton = driver.findElement(By.id("add-to-cart-sauce-labs-backpack"));
+        addToCartButton.click();
 
-            // Поиск и добавление товара в корзину
-            WebElement addToCartButton = driver.findElement(By.id("add-to-cart-sauce-labs-backpack"));
-            addToCartButton.click();
+        // Step 4: Check the cart count
+        WebElement cartBadge = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("shopping_cart_badge")));
+        String cartCount = cartBadge.getText();
+        assert cartCount.equals("1");
 
-            // Проверка обновления счетчика корзины
-            WebElement cartBadge = driver.findElement(By.className("shopping_cart_badge"));
-            Assertions.assertEquals("1", cartBadge.getText());
+        // Step 5: Check the product state
+        WebElement productButton = driver.findElement(By.id("remove-sauce-labs-backpack"));
+        assert productButton.getText().equals("Remove");
 
-            // Проверка изменения состояния кнопки товара
-            addToCartButton = driver.findElement(By.id("add-to-cart-sauce-labs-backpack"));
-            Assertions.assertTrue(addToCartButton.isDisplayed());
-            Assertions.assertFalse(addToCartButton.isEnabled());
-
-        } finally {
-            // Закрытие браузера
-            driver.quit();
-        }
+        driver.quit();
     }
 }
