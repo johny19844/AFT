@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>selenium-test-project</artifactId>
+    <artifactId>selenium-saucedemo-test</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -39,8 +39,6 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- JUnit 5 Parameterized Tests (optional) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
@@ -51,7 +49,6 @@
 
     <build>
         <plugins>
-            <!-- Maven Surefire Plugin for running tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -63,7 +60,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -74,5 +70,5 @@
                 </configuration>
             </plugin>
         </plugins>
-    </develop>
+    </build>
 </project>
