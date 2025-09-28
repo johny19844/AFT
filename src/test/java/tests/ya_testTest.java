@@ -1,46 +1,50 @@
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 public class ya_testTest {
+    private WebDriver driver;
+
+    @BeforeEach
+    public void setUp() {
+        System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
+        ChromeOptions options = new ChromeOptions();
+        driver = new ChromeDriver(options);
+    }
 
     @Test
-    public void testShoppingCart() {
-        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-
-        // Step 1: Open the login page
+    public void test() {
         driver.get("https://www.saucedemo.com");
 
-        // Step 2: Perform login
-        WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name")));
-        usernameField.sendKeys("standard_user");
-
-        WebElement passwordField = driver.findElement(By.id("password"));
-        passwordField.sendKeys("secret_sauce");
-
+        WebElement usernameInput = driver.findElement(By.id("user-name"));
+        WebElement passwordInput = driver.findElement(By.id("password"));
         WebElement loginButton = driver.findElement(By.id("login-button"));
+
+        usernameInput.sendKeys("standard_user");
+        passwordInput.sendKeys("secret_sauce");
         loginButton.click();
 
-        // Step 3: Find a product and add to cart
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-sauce-labs-backpack"));
         addToCartButton.click();
 
-        // Step 4: Check the cart count
-        WebElement cartBadge = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("shopping_cart_badge")));
-        String cartCount = cartBadge.getText();
-        assert cartCount.equals("1");
+        WebElement shoppingCartBadge = driver.findElement(By.className("shopping_cart_badge"));
+        String badgeText = shoppingCartBadge.getText();
+        assert badgeText.equals("1");
 
-        // Step 5: Check the product state
-        WebElement productButton = driver.findElement(By.id("remove-sauce-labs-backpack"));
-        assert productButton.getText().equals("Remove");
+        WebElement backpack = driver.findElement(By.id("item_4_title_link"));
+        String backpackText = backpack.getText();
+        assert backpackText.equals("Sauce Labs Backpack");
+    }
 
-        driver.quit();
+    @AfterEach
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
