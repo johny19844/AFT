@@ -8,11 +8,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ya_testTest {
 
     private WebDriver driver;
@@ -23,32 +18,32 @@ public class ya_testTest {
         System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
         driver = new ChromeDriver();
         wait = new WebDriverWait(driver, 10);
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.manage().window().maximize();
-        driver.get("https://www.saucedemo.com");
     }
 
     @Test
-    public void testAddToCart() {
-        WebElement usernameField = driver.findElement(By.id("user-name"));
-        WebElement passwordField = driver.findElement(By.id("password"));
+    public void testShoppingCart() {
+        driver.get("https://www.saucedemo.com");
+
+        // Логин
+        WebElement usernameInput = driver.findElement(By.id("user-name"));
+        WebElement passwordInput = driver.findElement(By.id("password"));
         WebElement loginButton = driver.findElement(By.id("login-button"));
 
-        usernameField.sendKeys("standard_user");
-        passwordField.sendKeys("secret_sauce");
+        usernameInput.sendKeys("standard_user");
+        passwordInput.sendKeys("secret_sauce");
         loginButton.click();
 
+        // Найти товар и добавить в корзину
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-sauce-labs-backpack"));
         addToCartButton.click();
 
-        WebElement shoppingCartBadge = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("shopping_cart_badge")));
-        assertEquals("1", shoppingCartBadge.getText());
+        // Проверить обновление счетчика корзины
+        WebElement shoppingCartBadge = driver.findElement(By.className("shopping_cart_badge"));
+        wait.until(ExpectedConditions.textToBePresentInElement(shoppingCartBadge, "1"));
 
-        WebElement cartButton = driver.findElement(By.className("shopping_cart_link"));
-        cartButton.click();
-
-        WebElement cartItem = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("item_4_title_link")));
-        assertTrue(cartItem.isDisplayed());
+        // Проверить изменение состояния кнопки товара
+        WebElement removeButton = driver.findElement(By.id("remove-sauce-labs-backpack"));
+        wait.until(ExpectedConditions.visibilityOf(removeButton));
     }
 
     @AfterEach
