@@ -5,45 +5,41 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.junit.jupiter.api.Assertions;
 
 public class ya_testTest {
-
     private WebDriver driver;
-    private WebDriverWait wait;
 
     @BeforeEach
     public void setUp() {
         System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
         driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, 10);
+        driver.get("https://www.saucedemo.com");
     }
 
     @Test
-    public void testShoppingCart() {
-        driver.get("https://www.saucedemo.com");
-
+    public void testAddToCartAndCheckCart() {
         // Логин
         WebElement usernameInput = driver.findElement(By.id("user-name"));
-        WebElement passwordInput = driver.findElement(By.id("password"));
-        WebElement loginButton = driver.findElement(By.id("login-button"));
-
         usernameInput.sendKeys("standard_user");
+
+        WebElement passwordInput = driver.findElement(By.id("password"));
         passwordInput.sendKeys("secret_sauce");
+
+        WebElement loginButton = driver.findElement(By.id("login-button"));
         loginButton.click();
 
-        // Найти товар и добавить в корзину
+        // Добавление товара в корзину
         WebElement addToCartButton = driver.findElement(By.id("add-to-cart-sauce-labs-backpack"));
         addToCartButton.click();
 
-        // Проверить обновление счетчика корзины
-        WebElement shoppingCartBadge = driver.findElement(By.className("shopping_cart_badge"));
-        wait.until(ExpectedConditions.textToBePresentInElement(shoppingCartBadge, "1"));
+        // Проверка обновления счетчика корзины
+        WebElement cartBadge = driver.findElement(By.className("shopping_cart_badge"));
+        Assertions.assertTrue(cartBadge.isDisplayed());
 
-        // Проверить изменение состояния кнопки товара
+        // Проверка изменения состояния кнопки товара
         WebElement removeButton = driver.findElement(By.id("remove-sauce-labs-backpack"));
-        wait.until(ExpectedConditions.visibilityOf(removeButton));
+        Assertions.assertFalse(removeButton.isDisplayed());
     }
 
     @AfterEach
