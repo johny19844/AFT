@@ -8,9 +8,12 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ya_testTest {
+
     private WebDriver driver;
     private WebDriverWait wait;
 
@@ -18,34 +21,37 @@ public class ya_testTest {
     public void setUp() {
         System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
         driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         wait = new WebDriverWait(driver, 10);
         driver.get("https://demoqa.com/text-box");
     }
 
     @Test
-    public void testTextBoxForm() {
+    public void testTextBox() {
+        // Заполнение формы
         WebElement fullNameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("userName")));
-        WebElement emailInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("userEmail")));
-        WebElement currentAddressInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("currentAddress")));
-        WebElement permanentAddressInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("permanentAddress")));
-        WebElement submitButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("submit")));
+        fullNameInput.sendKeys("Иван Петроs1йв");
 
-        fullNameInput.sendKeys("Иван Петроs1в");
+        WebElement emailInput = driver.findElement(By.id("userEmail"));
         emailInput.sendKeys("ivan.petrov@example.com");
+
+        WebElement currentAddressInput = driver.findElement(By.id("currentAddress"));
         currentAddressInput.sendKeys("Москва, ул. Примерная, д. 1");
+
+        WebElement permanentAddressInput = driver.findElement(By.id("permanentAddress"));
         permanentAddressInput.sendKeys("Санкт-Петербург, ул. Тестовая, д. 2");
+
+        // Нажатие кнопки Submit
+        WebElement submitButton = driver.findElement(By.id("submit"));
         submitButton.click();
 
-        WebElement resultFullName = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("name")));
-        WebElement resultEmail = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")));
-        WebElement resultCurrentAddress = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("currentAddress")));
-        WebElement resultPermanentAddress = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("permanentAddress")));
+        // Проверка отображения данных в результате
+        WebElement result = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("output")));
+        List<WebElement> resultItems = result.findElements(By.tagName("p"));
 
-        assert resultFullName.getText().contains("Иван Петроs1в");
-        assert resultEmail.getText().contains("ivan.petrov@example.com");
-        assert resultCurrentAddress.getText().contains("Москва, ул. Примерная, д. 1");
-        assert resultPermanentAddress.getText().contains("Санкт-Петербург, ул. Тестовая, д. 2");
+        assertEquals("Name:Иван Петроs1йв", resultItems.get(0).getText());
+        assertEquals("Email:ivan.petrov@example.com", resultItems.get(1).getText());
+        assertEquals("Current Address :Москва, ул. Примерная, д. 1", resultItems.get(2).getText());
+        assertEquals("Permanent Address :Санкт-Петербург, ул. Тестовая, д. 2", resultItems.get(3).getText());
     }
 
     @AfterEach
