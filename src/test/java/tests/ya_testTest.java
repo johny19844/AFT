@@ -1,35 +1,35 @@
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.junit.jupiter.api.Assertions;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.concurrent.TimeUnit;
 
 public class ya_testTest {
-
     private WebDriver driver;
-    private WebDriverWait wait;
 
     @BeforeEach
     public void setUp() {
         System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
         driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, 10);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.get("https://demoqa.com/text-box");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        driver.quit();
     }
 
     @Test
     public void testTextBox() {
         // Заполнение формы
-        WebElement fullNameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("userName")));
-        fullNameInput.sendKeys("Иван Петроs1йв");
+        WebElement fullNameInput = driver.findElement(By.id("userName"));
+        fullNameInput.sendKeys("Иван Петроsjj1йв");
 
         WebElement emailInput = driver.findElement(By.id("userEmail"));
         emailInput.sendKeys("ivan.petrov@example.com");
@@ -44,18 +44,15 @@ public class ya_testTest {
         WebElement submitButton = driver.findElement(By.id("submit"));
         submitButton.click();
 
-        // Проверка отображения данных в результате
-        WebElement result = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("output")));
-        List<WebElement> resultItems = result.findElements(By.tagName("p"));
+        // Проверка отображения данных в блоке результата
+        WebElement resultName = driver.findElement(By.id("name"));
+        WebElement resultEmail = driver.findElement(By.id("email"));
+        WebElement resultCurrentAddress = driver.findElement(By.id("currentAddress"));
+        WebElement resultPermanentAddress = driver.findElement(By.id("permanentAddress"));
 
-        assertEquals("Name:Иван Петроs1йв", resultItems.get(0).getText());
-        assertEquals("Email:ivan.petrov@example.com", resultItems.get(1).getText());
-        assertEquals("Current Address :Москва, ул. Примерная, д. 1", resultItems.get(2).getText());
-        assertEquals("Permanent Address :Санкт-Петербург, ул. Тестовая, д. 2", resultItems.get(3).getText());
-    }
-
-    @AfterEach
-    public void tearDown() {
-        driver.quit();
+        Assertions.assertEquals("Иван Петроsjj1йв", resultName.getText());
+        Assertions.assertEquals("ivan.petrov@example.com", resultEmail.getText());
+        Assertions.assertEquals("Москва, ул. Примерная, д. 1", resultCurrentAddress.getText());
+        Assertions.assertEquals("Санкт-Петербург, ул. Тестовая, д. 2", resultPermanentAddress.getText());
     }
 }
