@@ -32,7 +32,8 @@ public class ya_testTest {
         WebElement loginButton = driver.findElement(By.id("login-button"));
         loginButton.click();
 
-        assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl(), "Login failed");
+        String expectedUrl = "https://www.saucedemo.com/inventory.html";
+        assertEquals(expectedUrl, driver.getCurrentUrl(), "Login failed");
     }
 
     @AfterEach
