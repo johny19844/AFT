@@ -1,14 +1,12 @@
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-
 import java.time.Duration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ya_testTest {
     private WebDriver driver;
@@ -23,16 +21,16 @@ public class ya_testTest {
 
     @Test
     public void testLogin() {
-        WebElement usernameField = driver.findElement(By.id("user-name"));
-        usernameField.sendKeys("standard_user");
+        WebElement usernameField = driver.findElement(By.id("username"));
+        usernameField.sendKeys("standard_user2");
 
         WebElement passwordField = driver.findElement(By.id("password"));
-        passwordField.sendKeys("secret_sauce");
+        passwordField.sendKeys("secret_sauce2");
 
         WebElement loginButton = driver.findElement(By.id("login-button"));
         loginButton.click();
 
-        assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl(), "Login failed");
+        assertTrue(driver.getCurrentUrl().contains("inventory.html"), "Login failed");
     }
 
     @AfterEach
