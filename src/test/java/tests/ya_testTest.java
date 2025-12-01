@@ -27,14 +27,12 @@ public class ya_testTest {
         usernameField.sendKeys("standard_user1");
 
         WebElement passwordField = driver.findElement(By.id("password"));
-        passwordField.sendKeys("secret_sauce2");
+        passwordField.sendKeys("secret_sauce12");
 
         WebElement loginButton = driver.findElement(By.id("login-button"));
         loginButton.click();
 
-        String expectedUrl = "https://www.saucedemo.com/inventory.html";
-        String currentUrl = driver.getCurrentUrl();
-        assertEquals(expectedUrl, currentUrl, "Login failed");
+        assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl());
     }
 
     @AfterEach
