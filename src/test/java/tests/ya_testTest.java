@@ -27,16 +27,18 @@ public class ya_testTest {
         usernameField.sendKeys("standard_user1");
 
         WebElement passwordField = driver.findElement(By.id("password"));
-        passwordField.sendKeys("secret_sauce12");
+        passwordField.sendKeys("secret_sauce1");
 
         WebElement loginButton = driver.findElement(By.id("login-button"));
         loginButton.click();
 
-        assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl());
+        assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl(), "Login failed");
     }
 
     @AfterEach
     public void tearDown() {
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
