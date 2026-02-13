@@ -10,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import java.time.Duration;
 
 public class ya_testTest {
@@ -50,48 +51,12 @@ public class ya_testTest {
             PageFactory.initElements(driver, this);
         }
 
-        import org.openqa.selenium.By;
-        import org.openqa.selenium.WebDriver;
-        import org.openqa.selenium.WebElement;
-        import org.openqa.selenium.support.ui.ExpectedConditions;
-        import org.openqa.selenium.support.ui.WebDriverWait;
-        import java.time.Duration;
-        import org.apache.logging.log4j.LogManager;
-        import org.apache.logging.log4j.Logger;
-
-        public class LoginPage {
-            private WebDriver driver;
-            private WebDriverWait wait;
-            private static final Logger logger = LogManager.getLogger(LoginPage.class);
-
-            public LoginPage(WebDriver driver) {
-                this.driver = driver;
-                this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            }
-
-            public LoginPage clickСтраница() {
-                driver.get("https://www.saucedemo.com");
-                logger.info("Открыта страница https://www.saucedemo.com");
-
-                WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name")));
-                usernameField.clear();
-                usernameField.sendKeys("standard_user");
-                logger.info("Заполнено поле пользователь значением standard_user");
-
-                WebElement passwordField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password")));
-                passwordField.clear();
-                passwordField.sendKeys("secret_sauce");
-                logger.info("Заполнено поле пароль значением secret_sauce");
-
-                WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-button")));
-                loginButton.click();
-                logger.info("Нажата кнопка войти");
-
-                // Добавьте здесь проверку, что вход выполнен успешно
-                // Например, проверка наличия элемента, который появляется после успешного входа
-
-                return this;
-            }
+        public WwwSaucedemoComPage clickСтраница() {
+            logger.info("Выполнение шага CLICK для элемента: страница");
+            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(страница));
+            element.click();
+            Assertions.assertTrue(страница.isDisplayed(), "Элемент страницы не отображается после клика");
+            return this;
         }
 
     }
