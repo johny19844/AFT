@@ -85,13 +85,14 @@ public class ya_testTest {
 
                 WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-button")));
                 loginButton.click();
-                logger.info("Нажата кнопка вход");
+                logger.info("Нажата кнопка войти");
 
-                WebElement productLabel = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("product_label")));
-                if (productLabel.isDisplayed()) {
-                    logger.info("Вход выполнен успешно");
+                // Проверка успешного входа
+                WebElement inventoryContainer = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inventory_container")));
+                if (inventoryContainer.isDisplayed()) {
+                    logger.info("Вход выполнен успешн");
                 } else {
-                    logger.info("Вход не выполнен");
+                    logger.error("Вход не выполнен");
                 }
 
                 return this;
