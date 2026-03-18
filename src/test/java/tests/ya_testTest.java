@@ -23,22 +23,22 @@ public class ya_testTest {
 
     @Test
     public void testLogin() {
-        WebElement usernameField = driver.findElement(By.id("user-name"));
-        usernameField.sendKeys("standard_user1");
+        WebElement usernameInput = driver.findElement(By.id("user-name"));
+        usernameInput.sendKeys("standard_user1");
 
-        WebElement passwordField = driver.findElement(By.id("password"));
-        passwordField.sendKeys("secret_sauce1");
+        WebElement passwordInput = driver.findElement(By.id("password"));
+        passwordInput.sendKeys("secret_sauce1");
 
         WebElement loginButton = driver.findElement(By.id("login-button"));
         loginButton.click();
 
-        assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl(), "Login failed");
+        String expectedUrl = "https://www.saucedemo.com/inventory.html";
+        String currentUrl = driver.getCurrentUrl();
+        assertEquals(expectedUrl, currentUrl, "Login failed");
     }
 
     @AfterEach
     public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        driver.quit();
     }
 }
